@@ -1,0 +1,243 @@
+﻿@using System.Linq
+@{
+    Layout = "~/Views/Shared/_StudentLayout.cshtml";
+    ViewData["Title"] = "Dashboard";
+    var userName = User.Identity?.Name ?? "Student";
+    var todaysEvents = ViewBag.TodaysEvents ?? new List<RadMedics.Models.CalendarEvent>();
+    var currentDate = ViewBag.CurrentDate ?? DateTime.Today;
+}
+<style>
+    .dashboard-title { font-size: 2rem; font-weight: bold; color: #00173D; margin-bottom: 0.5rem; }
+    .dashboard-welcome { font-size: 1.3rem; margin-bottom: 2rem; }
+    .dashboard-cards { display: flex; gap: 32px; margin-bottom: 2rem; }
+    .dashboard-card {
+        background: #bfc3c7;
+        border-radius: 12px;
+        padding: 24px 32px;
+        min-width: 200px;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .dashboard-progress-row { display: flex; gap: 32px; margin-bottom: 2rem; }
+    .dashboard-progress {
+        background: #bfc3c7;
+        border-radius: 12px;
+        padding: 12px 32px;
+        min-width: 200px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .profile-widget {
+        position: absolute;
+        top: 40px;
+        right: 60px;
+        width: 220px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        padding: 24px 0 16px 0;
+        text-align: center;
+    }
+    .profile-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px auto;
+        font-size: 2.5rem;
+        color: #00173D;
+    }
+    .profile-name { font-size: 1.1rem; font-weight: 600; color: #222; }
+    .calendar-widget {
+        position: absolute;
+        top: 220px;
+        right: 60px;
+        width: 220px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        padding: 18px 0 10px 0;
+        text-align: center;
+    }
+    .calendar-title { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+    .calendar-table { width: 90%; margin: 0 auto; border-collapse: collapse; }
+    .calendar-table th, .calendar-table td { padding: 2px 6px; text-align: center; }
+    .calendar-table .today { background: #5FB0FA; color: #fff; border-radius: 50%; }
+    .todo-widget {
+        position: absolute;
+        top: 400px;
+        right: 60px;
+        width: 220px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        padding: 18px 0 10px 0;
+        text-align: left;
+    }
+    .todo-title { font-size: 1rem; font-weight: 600; margin-bottom: 8px; text-align: center; }
+    .todo-list { list-style: none; padding: 0 18px; margin: 0; }
+    .todo-list li { margin-bottom: 10px; }
+    .todo-list label { font-size: 0.98rem; }
+    .todo-list .todo-time { color: #e74c3c; font-size: 0.9rem; float: right; }
+    .todo-list .todo-location { font-size: 0.8rem; color: #888; margin-top: 2px; }
+    .no-events { font-size: 0.9rem; color: #888; text-align: center; padding: 10px; }
+    .delete-todo-btn {
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-left: 8px;
+        float: right;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+    }
+    .delete-todo-btn:hover {
+        background: #c82333;
+    }
+    .todo-list li {
+        position: relative;
+        padding-right: 30px;
+    }
+    @@media (max-width: 1200px) {
+        .profile-widget, .calendar-widget, .todo-widget { position: static; width: 100%; margin-bottom: 18px; }
+    }
+</style>
+<div>
+    <div class="dashboard-title">Dashboard</div>
+    <div class="dashboard-welcome">Welcome, @userName!</div>
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            Patient Transport<br /><span style="font-size:0.95rem;">PTR/001</span>
+        </div>
+        <div class="dashboard-card">
+            Basic Life Support<br /><span style="font-size:0.95rem;">BLS/001</span>
+        </div>
+        <div class="dashboard-card">
+            First Aid<br /><span style="font-size:0.95rem;">FA/001</span>
+        </div>
+    </div>
+    <div class="dashboard-progress-row">
+        <div class="dashboard-progress">Module Progress : <span>90%</span></div>
+        <div class="dashboard-progress">Course Progress : <span>90%</span></div>
+    </div>
+    <div class="profile-widget">
+        <div class="profile-avatar">
+            <span class="material-icons">account_circle</span>
+        </div>
+        <div class="profile-name">@userName</div>
+    </div>
+    <div class="calendar-widget">
+        <div class="calendar-title">@currentDate.ToString("MMMM yyyy")</div>
+        <table class="calendar-table">
+            <tr><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th></tr>
+            @{
+                var firstDayOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+                var firstDayOfWeek = (int)firstDayOfMonth.DayOfWeek;
+                var daysInMonth = lastDayOfMonth.Day;
+                
+                // Adjust for Sunday start (0 = Sunday, 6 = Saturday)
+                var startOffset = firstDayOfWeek;
+                var totalCells = startOffset + daysInMonth;
+                var weeks = (totalCells + 6) / 7;
+                
+                for (int week = 0; week < weeks; week++)
+                {
+                    <tr>
+                    @for (int dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++)
+                    {
+                        var cellIndex = week * 7 + dayOfWeek;
+                        var dayNumber = cellIndex - startOffset + 1;
+                        
+                        if (cellIndex < startOffset || dayNumber > daysInMonth)
+                        {
+                            <td></td>
+                        }
+                        else
+                        {
+                            var date = new DateTime(currentDate.Year, currentDate.Month, dayNumber);
+                            var isToday = date.Date == currentDate.Date;
+                            <td class="@(isToday ? "today" : "")">@dayNumber</td>
+                        }
+                    }
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+    <div class="todo-widget">
+        <div class="todo-title">Today's Events</div>
+        @if (todaysEvents.Count > 0)
+        {
+            <ul class="todo-list" id="todoList">
+                @foreach (var evt in todaysEvents)
+                {
+                    <li data-event-id="@evt.Id">
+                        <label>
+                            <input type="checkbox" /> @evt.Title 
+                            <span class="todo-time">@evt.StartDate.ToString("HH:mm")</span>
+                            <button class="delete-todo-btn" onclick="deleteEventFromDashboard(@evt.Id)" title="Delete event">×</button>
+                            @if (!string.IsNullOrEmpty(evt.Location))
+                            {
+                                <br /><span class="todo-location">📍 @evt.Location</span>
+                            }
+                        </label>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <div class="no-events">No events scheduled for today</div>
+        }
+    </div>
+</div>
+
+<script>
+function deleteEventFromDashboard(eventId) {
+    if (confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+        fetch(`/Student/DeleteEvent/${eventId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the event from the DOM
+                const eventElement = document.querySelector(`li[data-event-id="${eventId}"]`);
+                if (eventElement) {
+                    eventElement.remove();
+                }
+                
+                // Check if there are any events left
+                const todoList = document.getElementById('todoList');
+                if (todoList && todoList.children.length === 0) {
+                    // Replace with "no events" message
+                    todoList.innerHTML = '<div class="no-events">No events scheduled for today</div>';
+                }
+                
+                alert('Event deleted successfully!');
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the event.');
+        });
+    }
+}
+</script>

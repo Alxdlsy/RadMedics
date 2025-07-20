@@ -1,0 +1,497 @@
+﻿@model RadMedics.Models.StudentProfile
+@using System.Linq
+@{
+    Layout = "~/Views/Shared/_StudentLayout.cshtml";
+    ViewData["Title"] = "Profile";
+    var userName = Model?.Name ?? "Student";
+    var todaysEvents = ViewBag.TodaysEvents ?? new List<RadMedics.Models.CalendarEvent>();
+    var currentDate = ViewBag.CurrentDate ?? DateTime.Today;
+}
+<style>
+    .profile-container {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 24px;
+        max-width: 1200px;
+    }
+    .profile-main {
+        background: #fff;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #e9ecef;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 24px;
+        font-size: 2.5rem;
+        color: #00173D;
+    }
+    .profile-info {
+        flex: 1;
+    }
+    .profile-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #00173D;
+        margin-bottom: 8px;
+    }
+    .profile-role {
+        color: #666;
+        font-size: 1rem;
+    }
+    .edit-btn {
+        background: #00173D;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .edit-btn:hover {
+        background: #223366;
+    }
+    .profile-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+    }
+    .detail-item {
+        margin-bottom: 16px;
+    }
+    .detail-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 4px;
+        font-size: 0.95rem;
+    }
+    .detail-value {
+        color: #666;
+        font-size: 1rem;
+        padding: 8px 0;
+    }
+    .sidebar-widgets {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+    .widget {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .widget-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #00173D;
+    }
+    .calendar-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    .calendar-nav button {
+        background: none;
+        border: none;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: #666;
+    }
+    .calendar-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .calendar-table th, .calendar-table td {
+        padding: 4px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    .calendar-table .selected {
+        background: #5FB0FA;
+        color: #fff;
+        border-radius: 50%;
+    }
+    .todo-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .todo-list li {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: flex-start;
+    }
+    .todo-list input[type="checkbox"] {
+        margin-right: 8px;
+        margin-top: 2px;
+    }
+    .todo-list label {
+        flex: 1;
+        font-size: 0.95rem;
+    }
+    .todo-time {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        margin-left: 8px;
+    }
+    .progress-item {
+        margin-bottom: 12px;
+    }
+    .progress-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 4px;
+    }
+    .progress-value {
+        font-size: 1.1rem;
+        color: #00173D;
+        font-weight: 600;
+    }
+    
+    /* Modal Overlay */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+    .modal-content {
+        background: #fff;
+        border-radius: 16px;
+        padding: 32px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #00173D;
+    }
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+    .form-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+    .form-input:focus {
+        outline: none;
+        border-color: #5FB0FA;
+    }
+    .modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 24px;
+    }
+    .btn-cancel {
+        background: #6c757d;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        cursor: pointer;
+    }
+    .btn-save {
+        background: #5FB0FA;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        cursor: pointer;
+    }
+    .btn-save:hover {
+        background: #3498db;
+    }
+    @@media (max-width: 768px) {
+        .profile-container {
+            grid-template-columns: 1fr;
+        }
+        .profile-details {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-main">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <span>👤</span>
+            </div>
+            <div class="profile-info">
+                <div class="profile-name">@userName</div>
+                <div class="profile-role">Student</div>
+            </div>
+            <button class="edit-btn" onclick="openEditModal()">Edit Profile</button>
+        </div>
+        
+        <div class="profile-details">
+            <div class="detail-item">
+                <div class="detail-label">Name</div>
+                <div class="detail-value">@Model?.Name</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Course</div>
+                <div class="detail-value">@Model?.Course</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Sex</div>
+                <div class="detail-value">@Model?.Sex</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Age</div>
+                <div class="detail-value">@Model?.Age Years Old</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Contact No.</div>
+                <div class="detail-value">@Model?.ContactNumber</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Email Address</div>
+                <div class="detail-value">@Model?.EmailAddress</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="sidebar-widgets">
+        <div class="widget">
+            <div class="widget-title">Calendar</div>
+            <div class="calendar-nav">
+                <button>‹</button>
+                <span>@currentDate.ToString("MMMM yyyy")</span>
+                <button>›</button>
+            </div>
+            <table class="calendar-table">
+                <tr><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+                @{
+                    var firstDayOfMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
+                    var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+                    var firstDayOfWeek = (int)firstDayOfMonth.DayOfWeek;
+                    var daysInMonth = lastDayOfMonth.Day;
+                    
+                    // Adjust for Monday start (0 = Monday, 6 = Sunday)
+                    var startOffset = firstDayOfWeek == 0 ? 6 : firstDayOfWeek - 1;
+                    var totalCells = startOffset + daysInMonth;
+                    var weeks = (totalCells + 6) / 7;
+                    
+                    for (int week = 0; week < weeks; week++)
+                    {
+                        <tr>
+                        @for (int dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++)
+                        {
+                            var cellIndex = week * 7 + dayOfWeek;
+                            var dayNumber = cellIndex - startOffset + 1;
+                            
+                            if (cellIndex < startOffset || dayNumber > daysInMonth)
+                            {
+                                <td></td>
+                            }
+                            else
+                            {
+                                var date = new DateTime(currentDate.Year, currentDate.Month, dayNumber);
+                                var isToday = date.Date == currentDate.Date;
+                                <td class="@(isToday ? "selected" : "")">@dayNumber</td>
+                            }
+                        }
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+        
+        <div class="widget">
+            <div class="widget-title">Today's Events</div>
+            @if (todaysEvents.Count > 0)
+            {
+                <ul class="todo-list">
+                    @foreach (var evt in todaysEvents)
+                    {
+                        <li>
+                            <input type="checkbox" id="event_@evt.Id">
+                            <label for="event_@evt.Id">
+                                @evt.Title
+                                @if (!string.IsNullOrEmpty(evt.Location))
+                                {
+                                    <div style="font-size:0.85rem; color:#888;">📍 @evt.Location</div>
+                                }
+                            </label>
+                            <span class="todo-time">@evt.StartDate.ToString("HH:mm")</span>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div style="font-size:0.9rem; color:#888; text-align:center; padding:10px;">No events scheduled for today</div>
+            }
+        </div>
+        
+        <div class="widget">
+            <div class="widget-title">Progress</div>
+            <div class="progress-item">
+                <div class="progress-label">Module Progress</div>
+                <div class="progress-value">50%</div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">Course Progress</div>
+                <div class="progress-value">50%</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Alumni Details</h2>
+            <button class="close-btn" onclick="closeEditModal()">&times;</button>
+        </div>
+        <form id="editForm">
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-input" name="Name" value="@Model?.Name" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Course</label>
+                <input type="text" class="form-input" name="Course" value="@Model?.Course" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Sex</label>
+                <select class="form-input" name="Sex" required>
+                    @if (Model?.Sex == "Male")
+                    {
+                        <option value="Male" selected>Male</option>
+                        <option value="Female">Female</option>
+                    }
+                    else
+                    {
+                        <option value="Male">Male</option>
+                        <option value="Female" selected>Female</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Age</label>
+                <input type="number" class="form-input" name="Age" value="@Model?.Age" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Contact Number</label>
+                <input type="tel" class="form-input" name="ContactNumber" value="@Model?.ContactNumber" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-input" name="EmailAddress" value="@Model?.EmailAddress" required>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+                <button type="submit" class="btn-save">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openEditModal() {
+    document.getElementById('editModal').style.display = 'flex';
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEditModal();
+    }
+});
+
+// Handle form submission
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {};
+    
+    // Convert FormData to object
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+    
+    console.log('Sending data:', data); // Debug log
+    
+    fetch('/Student/UpdateProfile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        console.log('Response status:', response.status); // Debug log
+        return response.json();
+    })
+    .then(result => {
+        console.log('Response:', result); // Debug log
+        if (result.success) {
+            alert(result.message);
+            closeEditModal();
+            // Reload the page to show updated data
+            location.reload();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating profile: ' + error.message);
+    });
+});
+</script>

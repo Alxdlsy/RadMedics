@@ -1,0 +1,36 @@
+@model RadMedics.Models.MailMessage
+<style>
+.mail-detail {
+    background: #f9f9fb;
+    border-radius: 8px;
+    padding: 24px 32px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.mail-detail strong { color: #00173D; }
+.mail-detail .mail-content { margin-top: 18px; font-size: 1.1rem; color: #222; }
+.mail-detail .mail-meta { margin-bottom: 10px; font-size: 1rem; }
+.mail-detail .back-btn {
+    margin-top: 18px;
+    background: #5FB0FA;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 24px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.mail-detail .back-btn:hover { background: #3498db; }
+</style>
+<div class="mail-detail">
+    <div class="mail-meta">
+        <strong>From:</strong> @Model.FromUser?.UserName<br />
+        <strong>To:</strong> @Model.ToUser?.UserName<br />
+        <strong>Subject:</strong> @Model.Subject<br />
+        <strong>Date:</strong> @(Model.SentDate?.ToString("g") ?? "Draft")<br />
+    </div>
+    <div class="mail-content">@Model.Content</div>
+    <button class="back-btn" onclick="loadTab('Inbox', document.getElementById('tab-inbox'))">Back to Inbox</button>
+</div> 

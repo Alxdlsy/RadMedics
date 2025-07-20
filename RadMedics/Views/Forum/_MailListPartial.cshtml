@@ -1,0 +1,51 @@
+@model IEnumerable<RadMedics.Models.MailMessage>
+<style>
+.mail-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+.mail-list-table th, .mail-list-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #e9ecef;
+    text-align: left;
+    font-size: 1rem;
+}
+.mail-list-table th {
+    background: #f6f7fa;
+    font-weight: 600;
+    color: #222;
+}
+.mail-list-table tr:hover {
+    background: #f0f4fa;
+    cursor: pointer;
+}
+</style>
+@if (!Model.Any())
+{
+    <div>No mails found.</div>
+}
+else
+{
+    <table class="mail-list-table">
+        <thead>
+            <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Subject</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var mail in Model)
+        {
+            <tr onclick="viewMail(@mail.Id)">
+                <td>@mail.FromUser?.UserName</td>
+                <td>@mail.ToUser?.UserName</td>
+                <td>@mail.Subject</td>
+                <td>@(mail.SentDate?.ToString("g") ?? "Draft")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+} 

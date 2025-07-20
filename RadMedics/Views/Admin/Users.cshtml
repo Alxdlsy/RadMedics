@@ -1,0 +1,104 @@
+@model List<RadMedics.Models.ApplicationUser>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Users";
+}
+
+<div class="top-header">
+    <h1>RadMedics</h1>
+</div>
+
+<div class="main-content-area">
+    <h2 style="font-size: 1.8rem; font-weight: bold; color: #00173D; margin-bottom: 24px;">Users</h2>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 16px;">
+        <div style="flex: 1; position: relative;">
+            <input type="text" placeholder="Search Users" style="width: 100%; padding: 12px 16px 12px 40px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666;">🔍</span>
+        </div>
+        
+        <select style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; background: #fff;">
+            <option>Activity Status</option>
+            <option>Active</option>
+            <option>Inactive</option>
+        </select>
+        
+        <button style="background: #6c757d; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer;">
+            Create New User
+        </button>
+    </div>
+
+    <div style="background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead style="background: #f8f9fa;">
+                <tr>
+                    <th style="padding: 16px; text-align: left; font-weight: 600; color: #00173D; border-bottom: 1px solid #e9ecef;">User Id</th>
+                    <th style="padding: 16px; text-align: left; font-weight: 600; color: #00173D; border-bottom: 1px solid #e9ecef;">Username</th>
+                    <th style="padding: 16px; text-align: left; font-weight: 600; color: #00173D; border-bottom: 1px solid #e9ecef;">Password</th>
+                    <th style="padding: 16px; text-align: left; font-weight: 600; color: #00173D; border-bottom: 1px solid #e9ecef;">Email</th>
+                    <th style="padding: 16px; text-align: left; font-weight: 600; color: #00173D; border-bottom: 1px solid #e9ecef;">Phone Number</th>
+                    <th style="padding: 16px; text-align: left; font-weight: 600; color: #00173D; border-bottom: 1px solid #e9ecef;">Status</th>
+                    <th style="padding: 16px; text-align: left; font-weight: 600; color: #00173D; border-bottom: 1px solid #e9ecef;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var user in Model)
+                    {
+                        <tr style="border-bottom: 1px solid #f1f3f4;">
+                            <td style="padding: 16px; color: #00173D;">#@user.Id.Substring(0, 4)</td>
+                            <td style="padding: 16px; color: #00173D;">@user.UserName</td>
+                            <td style="padding: 16px; color: #00173D;">••••••••••••••</td>
+                            <td style="padding: 16px; color: #00173D;">@user.Email</td>
+                            <td style="padding: 16px; color: #00173D;">@(user.PhoneNumber ?? "N/A")</td>
+                            <td style="padding: 16px;">
+                                <span style="background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500;">
+                                    @(user.EmailConfirmed ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td style="padding: 16px;">
+                                <button style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #666;">⋮</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr style="border-bottom: 1px solid #f1f3f4;">
+                        <td style="padding: 16px; color: #00173D;">#2004</td>
+                        <td style="padding: 16px; color: #00173D;">joe</td>
+                        <td style="padding: 16px; color: #00173D;">StudentPassword!23</td>
+                        <td style="padding: 16px; color: #00173D;">student@example.com</td>
+                        <td style="padding: 16px; color: #00173D;">9803345877</td>
+                        <td style="padding: 16px;">
+                            <span style="background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 500;">Active</span>
+                        </td>
+                        <td style="padding: 16px;">
+                            <button style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #666;">⋮</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding: 16px 0;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #666;">Rows Per Page</span>
+            <select style="padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px;">
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #666;">Page 1 of 1</span>
+            <button style="background: none; border: 1px solid #ddd; padding: 8px; border-radius: 4px; cursor: pointer;">⟪</button>
+            <button style="background: none; border: 1px solid #ddd; padding: 8px; border-radius: 4px; cursor: pointer;">⟨</button>
+            <button style="background: none; border: 1px solid #ddd; padding: 8px; border-radius: 4px; cursor: pointer;">⟩</button>
+            <button style="background: none; border: 1px solid #ddd; padding: 8px; border-radius: 4px; cursor: pointer;">⟫</button>
+        </div>
+    </div>
+</div> 

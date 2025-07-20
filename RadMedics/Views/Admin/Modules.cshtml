@@ -1,0 +1,152 @@
+@model List<RadMedics.Models.Course>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Modules";
+}
+
+<div class="top-header">
+    <h1>RadMedics</h1>
+</div>
+
+<div class="main-content-area">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h2 style="font-size: 1.8rem; font-weight: bold; color: #00173D; margin-bottom: 8px;">Modules</h2>
+            <div style="color: #666; font-size: 1rem;">
+                <strong>@ViewBag.InProgressModules</strong> In Progress • 
+                <strong>@ViewBag.TotalModules</strong> Total Post
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div style="color: #666; margin-bottom: 8px;">December, 15</div>
+            <button style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #666;">☰</button>
+        </div>
+    </div>
+
+    <button id="addModuleBtn" style="background: #5FB0FA; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-bottom: 30px;">
+        + Add Module
+    </button>
+
+    <div class="module-cards" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
+        @if (Model.Any())
+        {
+            @foreach (var module in Model)
+            {
+                <div class="module-card">
+                    <div class="date">December 20, 2021</div>
+                    <button class="menu-btn" onclick="showModuleMenu(@module.Id)">⋮</button>
+                    <h3>@module.Name</h3>
+                    <div class="code">FA/001</div>
+                    <div class="footer">
+                        <div class="students">
+                            👥 Student 60
+                        </div>
+                        <div class="status">In Progress</div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="module-card">
+                <div class="date">December 20, 2021</div>
+                <button class="menu-btn">⋮</button>
+                <h3>First Aid</h3>
+                <div class="code">FA/001</div>
+                <div class="footer">
+                    <div class="students">
+                        👥 Student 60
+                    </div>
+                    <div class="status">In Progress</div>
+                </div>
+            </div>
+            <div class="module-card">
+                <div class="date">December 20, 2021</div>
+                <button class="menu-btn">⋮</button>
+                <h3>Web Designing</h3>
+                <div class="code">FA/001</div>
+                <div class="footer">
+                    <div class="students">
+                        👥 Student 60
+                    </div>
+                    <div class="status">In Progress</div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Add Module Modal Overlay -->
+<div id="addModuleModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+    <div style="background: #fff; border-radius: 12px; padding: 32px; width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h3 style="font-size: 1.5rem; font-weight: bold; color: #00173D; margin: 0;">Add Module</h3>
+            <button onclick="closeAddModuleModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">×</button>
+        </div>
+        
+        <form id="addModuleForm">
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: 600; color: #00173D; margin-bottom: 8px;">Title:</label>
+                <input type="text" id="moduleTitle" name="title" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-weight: 600; color: #00173D; margin-bottom: 8px;">Module Code:</label>
+                <input type="text" id="moduleCode" name="moduleCode" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+            </div>
+            
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button type="button" onclick="closeAddModuleModal()" style="background: #6c757d; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer;">Cancel</button>
+                <button type="submit" style="background: #5FB0FA; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer;">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('addModuleBtn').addEventListener('click', function() {
+    document.getElementById('addModuleModal').style.display = 'flex';
+});
+
+function closeAddModuleModal() {
+    document.getElementById('addModuleModal').style.display = 'none';
+    document.getElementById('addModuleForm').reset();
+}
+
+document.getElementById('addModuleForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('moduleTitle').value;
+    const moduleCode = document.getElementById('moduleCode').value;
+    
+    fetch('/Admin/AddModule', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            title: title,
+            moduleCode: moduleCode
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Module added successfully!');
+            closeAddModuleModal();
+            location.reload(); // Refresh to show new module
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while adding the module.');
+    });
+});
+
+function showModuleMenu(moduleId) {
+    // This will be implemented for module options (edit, delete, etc.)
+    console.log('Module menu for ID:', moduleId);
+}
+</script> 

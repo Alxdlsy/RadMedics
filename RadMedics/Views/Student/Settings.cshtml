@@ -1,0 +1,40 @@
+﻿@{
+    Layout = "~/Views/Shared/_StudentLayout.cshtml";
+    ViewData["Title"] = "Settings";
+}
+<h2>Settings</h2>
+
+@if (TempData["ChangePasswordSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData["ChangePasswordSuccess"]</div>
+}
+@if (TempData["ChangePasswordError"] != null)
+{
+    <div class="alert alert-danger">@TempData["ChangePasswordError"]</div>
+}
+
+<form asp-action="Logout" method="post" style="margin-bottom: 2rem;">
+    <button type="submit" class="btn btn-danger">Log out</button>
+</form>
+
+<h4>Change Password</h4>
+<form asp-action="ChangePassword" method="post">
+    <div class="form-group">
+        <label for="currentPassword">Current Password</label>
+        <input type="password" name="currentPassword" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <input type="password" name="newPassword" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="confirmPassword">Confirm New Password</label>
+        <input type="password" name="confirmPassword" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Change Password</button>
+</form>
+
+<style>
+    .form-group { margin-bottom: 1rem; }
+    .alert { margin-bottom: 1rem; }
+</style>

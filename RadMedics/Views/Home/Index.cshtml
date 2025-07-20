@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Welcome to RadMedics";
+}
+
+<style>
+    .landing-container {
+        display: flex;
+        min-height: 100vh;
+    }
+    .landing-left {
+        flex: 2;
+        background: url('/Radbg.jpg') center center/cover no-repeat;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .landing-right {
+        flex: 1;
+        background: #f5f5f5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        min-width: 320px;
+        box-shadow: -2px 0 8px rgba(0,0,0,0.03);
+    }
+    .rad-logo {
+        width: 90px;
+        height: 90px;
+        margin-bottom: 18px;
+        border-radius: 50%;
+        object-fit: contain;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .welcome-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+        text-align: center;
+    }
+    .welcome-desc {
+        font-size: 1rem;
+        color: #333;
+        margin-bottom: 24px;
+        text-align: center;
+    }
+    .landing-btn {
+        width: 100%;
+        padding: 12px 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border: none;
+        border-radius: 4px;
+        margin-bottom: 14px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .student-btn {
+        background: #5FB0FA;
+        color: #fff;
+    }
+    .student-btn:hover {
+        background: #3498db;
+    }
+    .admin-btn {
+        background: #00173D;
+        color: #fff;
+    }
+    .admin-btn:hover {
+        background: #223366;
+    }
+    .terms {
+        font-size: 0.85rem;
+        color: #444;
+        margin-top: 18px;
+        text-align: center;
+    }
+    .terms a {
+        color: #5FB0FA;
+        text-decoration: underline;
+    }
+    @@media (max-width: 900px) {
+        .landing-container { flex-direction: column; }
+        .landing-left, .landing-right { flex: unset; min-width: unset; min-height: 250px; }
+        .landing-left { min-height: 200px; }
+    }
+</style>
+
+<div class="landing-container">
+    <div class="landing-left">
+        <!-- Background image only -->
+    </div>
+    <div class="landing-right">
+        <img src="~/Radlogo.png" alt="RadMedics Logo" class="rad-logo" />
+        <div class="welcome-title">Welcome to RadMedics</div>
+        <div class="welcome-desc">↓ Please click or tap your destination.</div>
+        <button class="landing-btn student-btn" onclick="window.location.href='/Student/Login'">Student</button>
+        <button class="landing-btn admin-btn" onclick="window.location.href='/Admin/Login'">Admin</button>
+        <div class="terms">
+            By using this service, you understand and agree to the RadMedics Online Services
+            <a href="#">Terms of Use</a> and <a href="#">Privacy Statement</a>
+        </div>
+    </div>
+</div>

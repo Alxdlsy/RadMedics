@@ -1,0 +1,88 @@
+@{
+    ViewData["Title"] = "Forum";
+    Layout = "~/Views/Shared/_StudentLayout.cshtml";
+}
+<style>
+.forum-tabs {
+    display: flex;
+    background: #f6f7fa;
+    border-radius: 6px;
+    margin-bottom: 18px;
+    margin-top: 18px;
+    padding: 0 10px;
+    height: 40px;
+    align-items: center;
+    gap: 0;
+}
+.forum-tabs button {
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #222;
+    padding: 8px 32px;
+    border-radius: 6px 6px 0 0;
+    margin-right: 0;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.forum-tabs button.active, .forum-tabs button:focus {
+    background: #fff;
+    color: #00173D;
+    font-weight: bold;
+    border-bottom: 2px solid #5FB0FA;
+    outline: none;
+}
+.forum-tabs button:hover {
+    background: #e9ecef;
+}
+#forum-content {
+    background: #fff;
+    border-radius: 0 0 8px 8px;
+    min-height: 400px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    padding: 24px 18px;
+}
+</style>
+<h2 style="font-weight:bold; margin-top:10px;">Forum</h2>
+<div class="forum-tabs">
+    <button onclick="loadTab('Inbox', this)" id="tab-inbox">Inbox</button>
+    <button onclick="loadTab('Drafts', this)" id="tab-drafts">Draft</button>
+    <button onclick="loadTab('Sent', this)" id="tab-sent">Sent</button>
+    <button onclick="showCompose(this)" id="tab-compose">Add new mail</button>
+</div>
+<div id="forum-content"></div>
+@section Scripts {
+<script>
+function setActiveTab(btn) {
+    document.querySelectorAll('.forum-tabs button').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+}
+function loadTab(tab, btn) {
+    setActiveTab(btn);
+    fetch(`/Forum/${tab}`)
+        .then(r => r.text())
+        .then(html => {
+            document.getElementById('forum-content').innerHTML = html;
+        });
+}
+function showCompose(btn) {
+    setActiveTab(btn);
+    fetch('/Forum/AddMail')
+        .then(r => r.text())
+        .then(html => {
+            document.getElementById('forum-content').innerHTML = html;
+        });
+}
+function viewMail(id) {
+    fetch(`/Forum/ViewMail/${id}`)
+        .then(r => r.text())
+        .then(html => {
+            document.getElementById('forum-content').innerHTML = html;
+        });
+}
+document.addEventListener('DOMContentLoaded', () => {
+    loadTab('Inbox', document.getElementById('tab-inbox'));
+});
+</script>
+} 

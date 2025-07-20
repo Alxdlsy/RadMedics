@@ -1,0 +1,110 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Dashboard";
+    var modules = ViewBag.Modules as List<RadMedics.Models.Course> ?? new List<RadMedics.Models.Course>();
+}
+
+<div class="top-header">
+    <h1>RadMedics</h1>
+</div>
+
+<div class="content-wrapper">
+    <div class="main-content-area">
+        <h2 style="font-size: 2rem; font-weight: bold; color: #00173D; margin-bottom: 1rem;">Welcome, admin!</h2>
+        
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon users">👥</div>
+                <div class="stat-info">
+                    <h3>Total Users</h3>
+                    <div class="number">@ViewBag.TotalUsers Users</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon active">👤</div>
+                <div class="stat-info">
+                    <h3>Active Users</h3>
+                    <div class="number">@ViewBag.ActiveUsers Users</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon modules">📚</div>
+                <div class="stat-info">
+                    <h3>Module</h3>
+                    <div class="number">@ViewBag.TotalModules Module</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="module-section">
+            <h2>My Module</h2>
+            <div class="subtitle">These are the number of Module you're moderating:</div>
+            
+            <div class="module-cards">
+                @if (modules.Any())
+                {
+                    @foreach (var module in modules.Take(2))
+                    {
+                        <div class="module-card">
+                            <div class="date">December 20, 2021</div>
+                            <button class="menu-btn" onclick="showModuleMenu(@module.Id)">⋮</button>
+                            <h3>@module.Name</h3>
+                            <div class="code">FA/001</div>
+                            <div class="footer">
+                                <div class="students">
+                                    👥 Student 60
+                                </div>
+                                <div class="status">In Progress</div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="module-card">
+                        <div class="date">December 20, 2021</div>
+                        <button class="menu-btn">⋮</button>
+                        <h3>First Aid</h3>
+                        <div class="code">FA/001</div>
+                        <div class="footer">
+                            <div class="students">
+                                👥 Student 60
+                            </div>
+                            <div class="status">In Progress</div>
+                        </div>
+                    </div>
+                    <div class="module-card">
+                        <div class="date">December 20, 2021</div>
+                        <button class="menu-btn">⋮</button>
+                        <h3>Web Designing</h3>
+                        <div class="code">FA/001</div>
+                        <div class="footer">
+                            <div class="students">
+                                👥 Student 60
+                            </div>
+                            <div class="status">In Progress</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="upcoming-events">
+        <h3>Upcoming Events</h3>
+        
+        <div class="event-item">
+            <h4>Assignments</h4>
+            <div>First Aid</div>
+            <button class="assignment-btn">Assignment</button>
+            <div class="date">June 25, 2024</div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showModuleMenu(moduleId) {
+    // This will be implemented for module options (edit, delete, etc.)
+    console.log('Module menu for ID:', moduleId);
+}
+</script> 

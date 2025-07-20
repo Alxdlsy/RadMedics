@@ -1,0 +1,42 @@
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Settings";
+}
+
+<div class="top-header">
+    <h1>RadMedics</h1>
+</div>
+
+<div class="main-content-area">
+    <h2 style="font-size: 1.8rem; font-weight: bold; color: #00173D; margin-bottom: 2rem;">Settings</h2>
+
+    @if (TempData["ChangePasswordSuccess"] != null)
+    {
+        <div style="background: #d4edda; color: #155724; padding: 12px; border-radius: 8px; margin-bottom: 1rem;">@TempData["ChangePasswordSuccess"]</div>
+    }
+    @if (TempData["ChangePasswordError"] != null)
+    {
+        <div style="background: #f8d7da; color: #721c24; padding: 12px; border-radius: 8px; margin-bottom: 1rem;">@TempData["ChangePasswordError"]</div>
+    }
+
+    <form asp-action="Logout" method="post" style="margin-bottom: 2rem;">
+        <button type="submit" style="background: #dc3545; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer;">Log out</button>
+    </form>
+
+    <h4 style="font-size: 1.2rem; font-weight: 600; color: #00173D; margin-bottom: 1rem;">Change Password</h4>
+    <form asp-action="ChangePassword" method="post" style="max-width: 400px;">
+        <div style="margin-bottom: 1rem;">
+            <label for="currentPassword" style="display: block; font-weight: 600; color: #00173D; margin-bottom: 0.5rem;">Current Password</label>
+            <input type="password" name="currentPassword" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 1rem;">
+            <label for="newPassword" style="display: block; font-weight: 600; color: #00173D; margin-bottom: 0.5rem;">New Password</label>
+            <input type="password" name="newPassword" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+            <label for="confirmPassword" style="display: block; font-weight: 600; color: #00173D; margin-bottom: 0.5rem;">Confirm New Password</label>
+            <input type="password" name="confirmPassword" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box;">
+        </div>
+        <button type="submit" style="background: #5FB0FA; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer;">Change Password</button>
+    </form>
+</div> 

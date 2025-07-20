@@ -1,0 +1,145 @@
+@model List<RadMedics.Models.Course>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Assessments";
+}
+
+<div class="top-header">
+    <h1>RadMedics</h1>
+</div>
+
+<div class="main-content-area">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h2 style="font-size: 1.8rem; font-weight: bold; color: #00173D; margin-bottom: 8px;">Assessments</h2>
+            <div style="color: #666; font-size: 1rem;">
+                <strong>@ViewBag.InProgressAssessments</strong> In Progress • 
+                <strong>@ViewBag.TotalAssessments</strong> Total Post
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div style="color: #666; margin-bottom: 8px;">December, 15</div>
+            <button style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #666;">☰</button>
+        </div>
+    </div>
+
+    <button id="addAssessmentBtn" style="background: #5FB0FA; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-bottom: 30px;">
+        + Add Assessment
+    </button>
+
+    <div class="module-cards" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
+        @if (Model.Any())
+        {
+            @foreach (var assessment in Model)
+            {
+                <div class="module-card">
+                    <div class="date">December 20, 2021</div>
+                    <button class="menu-btn" onclick="showAssessmentMenu(@assessment.Id)">⋮</button>
+                    <h3>@assessment.Name</h3>
+                    <div class="code">FA/001</div>
+                    <div class="footer">
+                        <div class="students">
+                            💰 Student 63
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" @(assessment.Progress > 0 ? "checked" : "") onchange="toggleAssessmentStatus(@assessment.Id, this.checked)">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label">In Progress</span>
+                        </label>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="module-card">
+                <div class="date">December 20, 2021</div>
+                <button class="menu-btn">⋮</button>
+                <h3>First Aid</h3>
+                <div class="code">FA/001</div>
+                <div class="footer">
+                    <div class="students">
+                        💰 Student 63
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-label">In Progress</span>
+                    </label>
+                </div>
+            </div>
+            <div class="module-card">
+                <div class="date">December 20, 2021</div>
+                <button class="menu-btn">⋮</button>
+                <h3>Web Designing</h3>
+                <div class="code">FA/001</div>
+                <div class="footer">
+                    <div class="students">
+                        💰 Student 63
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-label">In Progress</span>
+                    </label>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+.toggle-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.toggle-slider {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 20px;
+    transition: 0.3s;
+    margin-right: 8px;
+}
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #28a745;
+}
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+.toggle-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #155724;
+}
+</style>
+
+<script>
+function showAssessmentMenu(assessmentId) {
+    console.log('Assessment menu for ID:', assessmentId);
+}
+
+function toggleAssessmentStatus(assessmentId, isActive) {
+    console.log('Assessment', assessmentId, 'status changed to:', isActive);
+    // Here you would typically make an AJAX call to update the assessment status
+}
+</script> 

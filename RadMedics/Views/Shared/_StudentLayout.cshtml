@@ -1,0 +1,80 @@
+@{
+    Layout = null;
+    var userName = User.Identity?.Name ?? "Student";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RadMedics</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        body { margin: 0; background: #f4f8fa; font-family: 'Segoe UI', Arial, sans-serif; }
+        .student-layout { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 220px;
+            background: #e9ecef;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .sidebar .logo {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: #00173D;
+            padding: 24px 0 16px 32px;
+            letter-spacing: 1px;
+        }
+        .sidebar nav {
+            flex: 1;
+        }
+        .sidebar nav a {
+            display: block;
+            padding: 14px 32px;
+            color: #222;
+            text-decoration: none;
+            font-size: 1rem;
+            border-left: 4px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .sidebar nav a.active, .sidebar nav a:hover {
+            background: #d1d8e0;
+            border-left: 4px solid #5FB0FA;
+            color: #00173D;
+        }
+        .sidebar .spacer { flex: 1; }
+        .sidebar .settings-link {
+            margin-bottom: 24px;
+        }
+        .main-content { flex: 1; padding: 36px 40px; }
+        @@media (max-width: 900px) {
+            .student-layout { flex-direction: column; }
+            .sidebar { width: 100%; flex-direction: row; }
+            .sidebar nav { display: flex; flex-direction: row; }
+            .sidebar nav a { flex: 1; padding: 12px 8px; font-size: 0.95rem; }
+            .main-content { padding: 20px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="student-layout">
+        <div class="sidebar">
+            <div class="logo">RadMedics</div>
+            <nav>
+                <a href="/Student/Dashboard" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">Home</a>
+                <a href="/Student/Profile" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "active" : "")">Profile</a>
+                <a href="/Student/Courses" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Courses" ? "active" : "")">My courses</a>
+                <a href="/Student/Calendar" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Calendar" ? "active" : "")">Calendar</a>
+                <a href="/Student/Forum" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Forum" ? "active" : "")">Forum</a>
+                <a href="/Student/Settings" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "") settings-link">Settings</a>
+            </nav>
+        </div>
+        <div class="main-content">
+            @RenderBody()
+        </div>
+    </div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html> 

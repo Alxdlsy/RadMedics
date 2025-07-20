@@ -1,0 +1,104 @@
+@{
+    var users = ViewBag.Users as List<RadMedics.Models.ApplicationUser>;
+}
+<style>
+.compose-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #f9f9fb;
+    border-radius: 8px;
+    padding: 24px 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.compose-form label {
+    font-weight: 600;
+    color: #00173D;
+    margin-top: 10px;
+    display: block;
+}
+.compose-form input, .compose-form select, .compose-form textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+.compose-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+.compose-form .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+.compose-form button {
+    background: #5FB0FA;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 24px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.compose-form button.cancel {
+    background: #ccc;
+    color: #222;
+}
+.compose-form button:hover:not(.cancel) { background: #3498db; }
+.compose-form button.cancel:hover { background: #b0b0b0; }
+</style>
+<form id="composeForm" class="compose-form">
+    <label>To:</label>
+    <select name="toUserId" required>
+        <option value="">Select user</option>
+        @if (users != null)
+        {
+            @foreach (var user in users)
+            {
+                <option value="@user.Id">@user.UserName</option>
+            }
+        }
+    </select>
+    <label>Subject:</label>
+    <input type="text" name="subject" required maxlength="200" />
+    <label>Content:</label>
+    <textarea name="content" required></textarea>
+    <div class="form-actions">
+        <button type="submit">Send</button>
+        <button type="button" class="cancel" onclick="loadTab('Inbox', document.getElementById('tab-inbox'))">Cancel</button>
+        <button type="button" onclick="saveDraft()">Save as Draft</button>
+    </div>
+</form>
+<script>
+document.getElementById('composeForm').onsubmit = function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    fetch('/Forum/AddMail', {
+        method: 'POST',
+        body: new URLSearchParams([...data])
+    }).then(r => r.json()).then(res => {
+        if (res.success) {
+            alert('Mail sent!');
+            loadTab('Sent', document.getElementById('tab-sent'));
+        }
+    });
+};
+function saveDraft() {
+    const form = document.getElementById('composeForm');
+    const data = new FormData(form);
+    data.append('isDraft', 'true');
+    fetch('/Forum/AddMail', {
+        method: 'POST',
+        body: new URLSearchParams([...data])
+    }).then(r => r.json()).then(res => {
+        if (res.success) {
+            alert('Draft saved!');
+            loadTab('Drafts', document.getElementById('tab-drafts'));
+        }
+    });
+}
+</script> 
